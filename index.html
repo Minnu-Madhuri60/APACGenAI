@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        VisionVoice AI
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HERO
+     ===================================================== -->
+
+<section class="hero">
+
+    <div class="badge">
+        Powered by Google Gemini
+    </div>
+
+
+    <h1>
+        VisionVoice AI
+    </h1>
+
+
+    <p>
+        AI-powered image understanding and
+        accessibility assistant.
+    </p>
+
+
+    <p class="subtitle">
+        Convert images into meaningful descriptions
+        using Google Gemini.
+    </p>
+
+</section>
+
+
+
+<!-- =====================================================
+     MAIN
+     ===================================================== -->
+
+<main class="container">
+
+
+    <!-- =================================================
+         IMAGE INPUT CARD
+         ================================================= -->
+
+    <section class="card">
+
+
+        <h2>
+            Upload an Image
+        </h2>
+
+
+
+        <!-- =================================================
+             UPLOAD + WEBCAM
+             ================================================= -->
+
+        <div class="input-methods">
+
+
+            <!-- =============================================
+                 UPLOAD AREA
+                 ============================================= -->
+
+            <div
+                class="upload-box"
+                id="dropZone"
+            >
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    name="image"
+                    accept="image/jpeg,image/png,image/webp"
+                    hidden
+                >
+
+
+                <label
+                    for="imageInput"
+                    class="upload-label"
+                >
+
+                    <div class="upload-icon">
+                        📷
+                    </div>
+
+
+                    <h3>
+                        Choose an image
+                    </h3>
+
+
+                    <p>
+                        JPG, PNG or WEBP
+                    </p>
+
+
+                    <p>
+                        Maximum size: 10 MB
+                    </p>
+
+                </label>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 WEBCAM AREA
+                 ============================================= -->
+
+            <div class="webcam-box">
+
+
+                <div class="webcam-icon">
+                    📹
+                </div>
+
+
+                <h3>
+                    Use Webcam
+                </h3>
+
+
+                <p>
+                    Capture an image using your camera
+                </p>
+
+
+                <button
+                    type="button"
+                    id="openCameraBtn"
+                    class="webcam-button"
+                >
+
+                    📷 Open Webcam
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             LIVE CAMERA
+             ================================================= -->
+
+        <div
+            id="cameraSection"
+            class="camera-section"
+        >
+
+
+            <div class="camera-header">
+
+
+                <strong>
+                    📹 Live Webcam
+                </strong>
+
+
+                <span
+                    id="cameraStatus"
+                    class="camera-status"
+                >
+                    Camera inactive
+                </span>
+
+
+            </div>
+
+
+            <video
+                id="cameraVideo"
+                autoplay
+                playsinline
+            ></video>
+
+
+            <canvas
+                id="cameraCanvas"
+                hidden
+            ></canvas>
+
+
+            <div class="camera-controls">
+
+
+                <button
+                    type="button"
+                    id="captureBtn"
+                    class="capture-button"
+                >
+
+                    📸 Capture Photo
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="closeCameraBtn"
+                    class="close-camera-button"
+                >
+
+                    ✕ Close Camera
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             PREVIEW
+             ================================================= -->
+
+        <div
+            id="previewContainer"
+            class="preview-container"
+        >
+
+
+            <h3>
+                Selected Image
+            </h3>
+
+
+            <img
+                id="preview"
+                alt="Selected image preview"
+            >
+
+
+            <button
+                type="button"
+                id="retakeBtn"
+                class="retake-button"
+            >
+
+                🔄 Choose Another Image
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             OPTIONS
+             ================================================= -->
+
+        <div class="options">
+
+
+            <!-- DESCRIPTION TYPE -->
+
+            <div class="option">
+
+
+                <label for="style">
+                    Description Type
+                </label>
+
+
+                <select id="style">
+
+
+                    <option>
+                        Accessibility Description
+                    </option>
+
+
+                    <option>
+                        Short Caption
+                    </option>
+
+
+                    <option>
+                        Detailed Description
+                    </option>
+
+
+                </select>
+
+
+            </div>
+
+
+
+            <!-- LANGUAGE -->
+
+            <div class="option">
+
+
+                <label for="language">
+                    Language
+                </label>
+
+
+                <select id="language">
+
+
+                    <option>
+                        English
+                    </option>
+
+
+                    <option>
+                        Telugu
+                    </option>
+
+
+                    <option>
+                        Hindi
+                    </option>
+
+
+                </select>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             GENERATE BUTTON
+             ================================================= -->
+
+        <button
+            id="generateBtn"
+            disabled
+        >
+
+            ✨ Generate with Gemini
+
+        </button>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         RESULT
+         ===================================================== -->
+
+    <section class="result-card">
+
+
+        <h2>
+            AI Generated Result
+        </h2>
+
+
+        <div
+            id="loading"
+            class="loading hidden"
+        >
+
+
+            <div class="spinner"></div>
+
+
+            <span>
+                Gemini is analyzing the image...
+            </span>
+
+
+        </div>
+
+
+        <div
+            id="result"
+            class="result"
+        >
+
+            Upload an image or capture one
+            using the webcam to generate
+            an AI description.
+
+        </div>
+
+
+        <div
+            id="metadata"
+            class="metadata"
+        ></div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         WHY VISIONVOICE
+         ===================================================== -->
+
+    <section class="impact">
+
+
+        <h2>
+            Why VisionVoice AI?
+        </h2>
+
+
+        <div class="impact-grid">
+
+
+            <div class="impact-card">
+
+
+                <div class="icon">
+                    ♿
+                </div>
+
+
+                <h3>
+                    Accessibility
+                </h3>
+
+
+                <p>
+                    Makes visual information easier
+                    to understand for people who
+                    cannot easily access images.
+                </p>
+
+
+            </div>
+
+
+
+            <div class="impact-card">
+
+
+                <div class="icon">
+                    🌏
+                </div>
+
+
+                <h3>
+                    Multilingual
+                </h3>
+
+
+                <p>
+                    Generate descriptions in
+                    English, Telugu and Hindi.
+                </p>
+
+
+            </div>
+
+
+
+            <div class="impact-card">
+
+
+                <div class="icon">
+                    🤖
+                </div>
+
+
+                <h3>
+                    Generative AI
+                </h3>
+
+
+                <p>
+                    Uses Google's multimodal Gemini
+                    model to understand images.
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+
+<footer>
+
+    VisionVoice AI |
+    Google Gemini |
+    Gen AI Academy APAC
+
+</footer>
+
+
+
+<script
+    src="{{ url_for('static', filename='script.js') }}"
+></script>
+
+
+</body>
+
+</html>
